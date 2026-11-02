@@ -3,6 +3,8 @@
 A quick prototype that classifies thermal drone frames as **Fire** or **No Fire** using the
 [FLAME 3 computer-vision subset (Sycan Marsh)](https://www.kaggle.com/datasets/brycehopkins/flame-3-computer-vision-subset-sycan-marsh).
 A MobileNetV2 transfer-learning model is compared against a one-line baseline: `max temperature > 80 °C`.
+[Take a look at the repository here](https://www.kaggle.com/code/adityajohorey/wildfire-and-hotspot-detection)
+
 
 > **Key finding:** the 80 °C rule scores **100%** on the test split, the CNN scores **99.1%**.
 > The two classes do not overlap on per-image max temperature, so this dataset is too easy to show
@@ -59,18 +61,20 @@ In Google Colab, mount Drive first and point `--cache_dir` at a Drive folder so 
 
 The CNN's single error was the dimmest fire frame (max ~108 °C), classified as No Fire. The threshold rule gets it right.
 
+<img width="1189" height="900" alt="download1" src="https://github.com/user-attachments/assets/985eeb6a-7b99-41a9-bb85-2bf80d5e792d" />
+
+
+
 ## Limitations
 
 - **Trivially separable data:** a plain threshold already classifies every image, so a high CNN score says little about generalization.
 - **Small No Fire sample:** 116 images in total and 18 in the test split, so one error moves its metrics a lot.
-- **No hard negatives:** no sun-heated ground, rocks or vehicles in the data, which is where real false alarms come from.
 - **Apparent temperatures:** the DJI conversion assumes fixed emissivity (~0.95) and distance, so values over flames are approximate, and small flames can be under-reported.
 - **Single location and campaign:** results may not transfer to other terrain or sensors.
 
 ## Next steps
 
 - Pixel-level segmentation (`make_mask` in `src/data.py` already builds threshold masks). Prefer the dataset's own fire masks if it ships them.
-- Evaluate on hard negatives and on other flights or sites.
 - Add a minimum hot-pixel count to the baseline, e.g. `(t > 80).sum() >= 10`.
 
 ## Acknowledgements
